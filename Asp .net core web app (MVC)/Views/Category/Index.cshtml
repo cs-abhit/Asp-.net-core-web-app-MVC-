@@ -1,0 +1,56 @@
+﻿@model List<Category>  // fetch data from controller return statement.
+
+@* ----------------------------------------------------- *@
+
+@* to show message of tempdata into redirected page. *@
+@* @if (TempData["Success"] != null)
+{
+    <h2>@TempData["Success"]</h2>
+} *@
+
+@* -------------------------------------------------- *@
+
+@* <partial name="_Notification" />   redirect to _Notification view. and show toaster *@
+
+
+<div class="container">
+    <div class="row pt-4 pb-3">  @* Row divided container into 12 parts *@
+        <div class="col-6">
+            <h2 class="text-primary">
+                Category List
+            </h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Category" asp-action="Create" class="btn btn-primary"> <i class="bi bi-plus-circle"></i> Create New category</a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Category Name</th>
+
+                <th>Display Order</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var obj in Model.OrderBy(u => u.DisplayOrder))
+            {   //There are many method use with model to filter data from database.
+                <tr>
+                    <td> @obj.Name </td>
+                    <td> @obj.DisplayOrder </td>
+                    <td>
+                        <div class="w-100 btn-group" role="group">
+                            <a asp-controller="Category" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <a asp-controller="Category" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-2">
+                                <i class="bi bi-trash-fill"></i> Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

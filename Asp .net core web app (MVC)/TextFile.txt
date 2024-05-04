@@ -1,0 +1,11 @@
+﻿RenderBody: is used for rendering the content of the child view. In layout pages, it renders the portion of a content page. 
+			It takes the content of the child page and merges into the layout.
+
+Partial view: in ASP.NET MVC is a special view that renders a portion of view content. It is just like a user control of a web form application. 
+			  Partial can be reusable in multiple views. It helps us to reduce code duplication. In other word a partial view enables us to render a view within the parent view.
+
+Data Annotations: are nothing but certain validations that we put in our models to validate the input from the user.
+				System.ComponentModel.DataAnnotations: Key, Timestamp, ConcurrencyCheck, Required, MinLength, MaxLength, StringLength, bind, range, RegularExpression, DisplayName
+				System.ComponentModel.DataAnnotations.Schema: Table, Column, Index, ForeignKey, NotMapped, InverseProperty
+
+
