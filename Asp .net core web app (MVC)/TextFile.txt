@@ -9,3 +9,13 @@ Data Annotations: are nothing but certain validations that we put in our models 
 				System.ComponentModel.DataAnnotations.Schema: Table, Column, Index, ForeignKey, NotMapped, InverseProperty
 
 
+Dependency injection: 
+1. Transient: new service - every time requested
+	1. 
+2. Singleton : new service - once per request (Still page not reload)
+3. Scoped: new service - once per application lifetime
+
+
+Note: Avoid using viewbag and viewdata as they are not dynamic and only bind with model (that model surely used in many files) and leading to misunderstandings about the source of data.
+		instead of use viewModel. alternative is tightly bind your view with the object of you want. 
+

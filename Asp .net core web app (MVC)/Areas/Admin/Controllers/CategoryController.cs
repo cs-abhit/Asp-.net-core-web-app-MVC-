@@ -1,24 +1,26 @@
-﻿using Asp_.net_core_web_app__MVC_.Data;
-using Asp_.net_core_web_app__MVC_.Models;
+﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Web.Http.ModelBinding;
+using Library.Models;
+using Library.DataAccess.Data;
+using Library.DataAccess.Repository.IRepository;
 
-namespace Asp_.net_core_web_app__MVC_.Controllers
+
+namespace Asp_.net_core_web_app__MVC_.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         // ApplicationDbContext service already register in program.cs file, so directly referenced it and used by local variable.
-        private readonly ApplicationDbContext _db;
-        public CategoryController(ApplicationDbContext db)
+        //private readonly ApplicationDbContext _db;        // we use this in repository instead of use in every controller.
+
+        public readonly IUnitOfWork _unitOfWork;
+        public CategoryController(IUnitOfWork db)     // here we asking dependency inject to provide implementation of the i category repo. so we have to registerd service in program.cs file.
         {
-            _db = db;
+            _unitOfWork = db;
         }
         public IActionResult Index()
         {
-            List<Category> objCategoryList = _db.Categories.ToList();
+            List<Category> objCategoryList = _unitOfWork.Category.GetAll().ToList();
             return View(objCategoryList);
         }
 
@@ -30,31 +32,31 @@ namespace Asp_.net_core_web_app__MVC_.Controllers
         [HttpPost]
         public IActionResult Create(Category obj)
         {
-            if (!ModelState.IsValid  || obj == null)
+            if (!ModelState.IsValid || obj == null)
             {
                 return BadRequest();
             }
 
-            if(obj.Name.ToLower() == "test")
+            if (obj.Name.ToLower() == "test")
             {
                 ModelState.AddModelError("name", "category Name is can not be test."); //key which is used in asp-for control.
             }
 
-            _db.Categories.Add(obj);
-            _db.SaveChanges();
+            _unitOfWork.Category.Add(obj);
+            _unitOfWork.Save();
             TempData["success"] = "Category created successfully";  // use to notify that action is completed with message dialog.
-            return RedirectToAction("Index","Category");
+            return RedirectToAction("Index", "Category");
         }
 
 
-        public  IActionResult Edit(int? id) 
-        {   
+        public IActionResult Edit(int? id)
+        {
             if (id == null || id == 0)
             {
                 return BadRequest();
             }
 
-            Category category = _db.Categories.FirstOrDefault(p => p.Id == id);  // find, Where etc way ...
+            Category category = _unitOfWork.Category.GetValue(p => p.Id == id);  // find, Where etc way ...
             return View(category);
         }
 
@@ -67,8 +69,8 @@ namespace Asp_.net_core_web_app__MVC_.Controllers
                 return BadRequest();
             }
 
-            _db.Categories.Update(obj);
-            _db.SaveChanges();
+            _unitOfWork.Category.update(obj);
+            _unitOfWork.Save();
             TempData["success"] = "Category updated successfully";
             return RedirectToAction("Index", "Category");  // if in the same controller no need to write controller name.
         }
@@ -81,24 +83,24 @@ namespace Asp_.net_core_web_app__MVC_.Controllers
                 return BadRequest();
             }
 
-            Category category = _db.Categories.Find(id); 
+            Category category = _unitOfWork.Category.GetValue(p => p.Id == id);
             return View(category);
         }
 
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePost(int? id)    // here you can also get category obj as well as edit post method.
         {
-            if(id == null || id == 0) { return BadRequest(); }
+            if (id == null || id == 0) { return BadRequest(); }
 
-            Category category = _db.Categories.Find(id);
+            Category category = _unitOfWork.Category.GetValue(p => p.Id == id);
 
             if (category == null)
             {
                 return NotFound();
             }
 
-            _db.Categories.Remove(category);
-            _db.SaveChanges();
+            _unitOfWork.Category.Remove(category);
+            _unitOfWork.Save();
             TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index");
         }
